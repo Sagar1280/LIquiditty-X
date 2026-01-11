@@ -36,72 +36,86 @@ nav {
     transform: translateY(-1px);
     color: #a154f3;
     cursor: pointer;
-
 }
 
 .down-arrow {
     width: 13px;
     height: 13px;
-
-
     margin-left: 5px;
     filter: invert(100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .nav-item:hover .down-arrow {
-
     filter: invert(43%) sepia(76%) saturate(3000%) hue-rotate(250deg) brightness(95%) contrast(100%);
     transform: rotate(180deg);
+}
+
+
+/* DROPDOWN MENU */
+.dropdown {
+    position: relative;
 }
 
 .dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
-    color: white;
-
-
-    background: #111;
-    font-size: 14px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 2px solid #571999;
-    min-width: 300px;
-    border-radius: 14px;
-    opacity:0;
-    transform: translateY(-10px);
+    min-width: 220px;                  
+    background-color: #1a1a1a;         
+    border-radius: 12px;              
+    padding: 8px 0;                    
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);  
+    border: 1px solid #571999;         
+    opacity: 0;
+    transform: translateY(-15px);    
     pointer-events: none;
-
-    transition: 0.3s ease;
-
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 100;
 }
 
+
 .dropdown:hover .dropdown-menu {
-    display: block;
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
-
 }
+
 
 .dropdown-menu li {
     list-style: none;
-    margin: 10px 0 10px 0;
     padding: 12px 20px;
-    border-bottom: 1px solid rgb(64, 63, 63);
-
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    color: #fff;
+    font-weight: 500;
+    font-size: 14.5px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
 }
 
+
+.dropdown-menu li:last-child {
+    border-bottom: none;
+}
+
+
+.dropdown-menu li:hover {
+    background: rgba(255, 255, 255, 0.05);  
+    transform: translateX(5px);            
+}
+
+
+/* LOGO */
 .logo:hover {
     cursor: pointer;
-
 }
 
 .logo img {
     height: 40px;
 }
 
+/* NAV RIGHT */
 .ul-nav-right {
     display: flex;
     align-items: center;
@@ -114,13 +128,11 @@ nav {
     border: none;
     border-radius: 20px;
     padding: 8px 15px;
-}
-
-.button1 {
     color: white;
-    text-decoration: none;
     font-weight: 600;
     cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .button1:hover {
@@ -132,21 +144,17 @@ nav {
 .hero {
     min-height: 100vh;
     padding-top: 100px;
-
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 80px;
     padding-right: 120px;
-
     background:
         linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .35)),
         url('/Frontend/Essentials/FRONT.jpg');
-
     background-size: cover;
     background-position: center;
 }
-
 
 /* TEXT SECTION */
 .hero-text {
@@ -174,38 +182,32 @@ nav {
     line-height: 1.55;
 }
 
+/* HERO2 */
 .hero2 {
     width: 100%;
     min-height: 100vh;
     background: white;
     color: black;
-
     border: 10px solid black;
     border-top: 60px solid black;
     border-bottom: 30px solid black;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-
     padding: 0 6%;
-
 }
 
-/* Title */
 .hero2 .header {
     font-size: 34px;
     font-weight: 800;
     margin-bottom: 12px;
 }
 
-/* Highlight */
 .hero2 span {
     color: #9d6bff;
 }
 
-/* Body text */
 .hero2 .body {
     color: black;
     text-align: left;
@@ -217,7 +219,6 @@ nav {
 .hero2-content {
     width: 100%;
     max-width: 1200px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -235,7 +236,7 @@ nav {
     box-shadow: 0 10px 10px rgba(131, 39, 255, .5);
 }
 
-/* HERO 3 — FULLSCREEN BACKGROUND IMAGE SECTION */
+/* HERO3 */
 .hero3 {
     width: 100%;
     min-height: 95vh;
@@ -243,7 +244,6 @@ nav {
     background:
         linear-gradient(rgba(0, 0, 0, .45), rgba(0, 0, 0, 0.45)),
         url("/Frontend/Essentials/trading.jpg") center/cover no-repeat;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -253,7 +253,6 @@ nav {
 .video-wrapper {
     position: relative;
     width: 60%;
-    /* make the video large */
     aspect-ratio: 16 / 9;
     border-radius: 20px;
     overflow: hidden;
@@ -266,7 +265,6 @@ nav {
     border: none;
 }
 
-/* RIGHT CONTENT STACK */
 .hero3-content {
     display: flex;
     flex-direction: column;
@@ -274,17 +272,14 @@ nav {
     max-width: 420px;
 }
 
-/* INFO CARDS */
 .info-box {
     background: linear-gradient(135deg, #431c82, #7a39ff);
     border-radius: 22px;
     padding: 22px 26px;
     width: 400px;
-
     box-shadow:
         0 0 18px rgba(131, 39, 255, .5),
         inset 0 0 12px rgba(255, 255, 255, .18);
-
     border: 1px solid rgba(255, 255, 255, .25);
     color: white;
 }
@@ -301,24 +296,19 @@ nav {
     line-height: 1.6;
 }
 
-/* CARD */
+/* STATS CARD */
 .stats-card {
     width: 340px;
     padding: 20px;
     border-radius: 22px;
     margin-top: 40px;
-
-
     background: linear-gradient(160deg, #4a0a8a, #2b0a4f);
-
     box-shadow:
         0 0 18px rgba(131, 39, 255, .5),
         inset 0 0 12px rgba(255, 255, 255, .15);
-
     border: 1px solid rgba(255, 255, 255, .15);
 }
 
-/* HEADER */
 .stats-header {
     text-align: center;
     margin-bottom: 12px;
@@ -326,20 +316,12 @@ nav {
     font-size: 18px;
 }
 
-/* ROWS */
 .stat-row {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
     border-bottom: 1px solid rgba(255, 255, 255, .12);
 }
-
-.hamburger {
-    font-size: 28px;
-    cursor: pointer;
-    display: none;
-}
-
 
 .pos {
     color: #6dff86;
@@ -349,11 +331,15 @@ nav {
     color: #ff6d6d;
 }
 
-
+/* HAMBURGER */
+.hamburger {
+    font-size: 28px;
+    cursor: pointer;
+    display: none;
+}
 
 /* RESPONSIVE */
 @media (max-width:900px) {
-
     .hero {
         flex-direction: column;
         justify-content: flex-start;
