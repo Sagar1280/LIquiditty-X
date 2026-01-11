@@ -183,7 +183,7 @@ nav {
     padding-right: 120px;
     background:
         linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .35)),
-        url('/Frontend/Essentials/FRONT.jpg');
+        url('../public/Essentials/FRONT.jpg');
     background-size: cover;
     background-position: center;
 }
@@ -275,7 +275,7 @@ nav {
     border: 15px solid black;
     background:
         linear-gradient(rgba(0, 0, 0, .45), rgba(0, 0, 0, 0.45)),
-        url("/Frontend/Essentials/trading.jpg") center/cover no-repeat;
+        url("../public/Essentials/trading.jpg") center/cover no-repeat;
     display: flex;
     justify-content: space-between;
     align-items: center;
