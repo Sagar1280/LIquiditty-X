@@ -52,58 +52,90 @@ nav {
 }
 
 
+
 /* DROPDOWN MENU */
 .dropdown {
     position: relative;
 }
 
-.dropdown-menu {
+
+.dropdown::after {
+    content: "";
     position: absolute;
     top: 100%;
     left: 0;
-    min-width: 220px;                  
-    background-color: #1a1a1a;         
-    border-radius: 12px;              
-    padding: 8px 0;                    
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);  
-    border: 1px solid #571999;         
+    width: 100%;
+    height: 20px;              
+}
+
+/* DROPDOWN MENU */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;              
+    left: 0;
+    min-width: 220px;
+    background: linear-gradient(180deg, #1b1b1b, #111111);
+    border-radius: 14px;
+    padding: 6px 0;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.6),
+        0 4px 6px rgba(0,0,0,0.3);
+
+    border: 1px solid #7b3fff;
+
     opacity: 0;
-    transform: translateY(-15px);    
+    transform: translateY(-9px);   
     pointer-events: none;
+
     transition: opacity 0.3s ease, transform 0.3s ease;
     z-index: 100;
 }
 
-
+/* SHOW ON HOVER */
 .dropdown:hover .dropdown-menu {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(20px);   
+    transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: auto;
 }
 
 
+/* DROPDOWN ITEMS */
 .dropdown-menu li {
     list-style: none;
-    padding: 12px 20px;
+    padding: 12px 24px;
     margin: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-    color: #fff;
+    min-width: 300px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+    color: #e0e0e0;
     font-weight: 500;
-    font-size: 14.5px;
+    font-size: 15px;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.15s ease;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
 }
 
-
+/* REMOVE BORDER ON LAST ITEM */
 .dropdown-menu li:last-child {
     border-bottom: none;
 }
 
-
+/* HOVER EFFECTS */
 .dropdown-menu li:hover {
-    background: rgba(255, 255, 255, 0.05);  
-    transform: translateX(5px);            
+    background: linear-gradient(45deg, rgba(81, 0, 255, 0.3), rgba(255, 255, 255, 0.277));
+    color: #fff;
+    transform: translateX(5px);
+    border-radius: 8px;
 }
+.dropdown-menu li:hover{
+   color:#a872ff;
+}
+
+.dropdown-menu li p{
+    font-size: 10px;
+    opacity: 70%;
+}
+
 
 
 /* LOGO */
