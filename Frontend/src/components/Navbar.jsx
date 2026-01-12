@@ -1,17 +1,39 @@
+import { NavLink, useLocation } from "react-router-dom";
+
 function Navbar() {
+
+  //Location specifer 
+  const location = useLocation();
+
+  // Parent active detection
+  const isTradeActive =
+    location.pathname.startsWith("/spot") ||
+    location.pathname.startsWith("/futures");
+
+  const isBuyActive = location.pathname.startsWith("/buy");
+
   return (
+
     <nav className="navbar">
+
+
+      {/*-------------------------- LEFT MENU---------------------------------------------- */}
       <ul className="nav-menu nav-menu-left">
+        {/*------------------------------------- LOGO -------------------------------------*/}
         <li className="nav-logo">
-          <a href="/">
+
+          <NavLink to="/">
             <img src="/Essentials/Name.svg" alt="Liquidity-X" />
-          </a>
+          </NavLink>
+
         </li>
 
+        {/*-------------------------------- MARKET *---------------------------------------*/}
         <li className="nav-item">Market</li>
 
-        {/* TRADE */}
-        <li className="nav-item nav-dropdown">
+        {/*---------------------------------TRADE------------------------------------------ */}
+        <li className={`nav-item nav-dropdown ${isTradeActive ? "active" : ""}`}>
+
           <span className="nav-dropdown-trigger">
             Trade
             <img
@@ -19,23 +41,37 @@ function Navbar() {
               className="nav-arrow"
               alt="dropdown"
             />
-
           </span>
 
           <ul className="nav-dropdown-menu">
             <li>
-              <h3>Trade Spot</h3>
-              <p>Buy crypto using USDT</p>
+              <NavLink
+                to="/spot"
+                className={({ isActive }) =>
+                  isActive ? "dropdown-link active" : "dropdown-link"
+                }
+              >
+                <h3>Trade Spot</h3>
+                <p>Buy crypto using USDT</p>
+              </NavLink>
             </li>
+
             <li>
-              <h3>Trade Futures</h3>
-              <p>Leverage trading in USDT</p>
+              <NavLink
+                to="/futures"
+                className={({ isActive }) =>
+                  isActive ? "dropdown-link active" : "dropdown-link"
+                }
+              >
+                <h3>Trade Futures</h3>
+                <p>Leverage trading in USDT</p>
+              </NavLink>
             </li>
           </ul>
         </li>
 
-        {/* BUY */}
-        <li className="nav-item nav-dropdown">
+        {/*--------------------------------- BUY----------------------------------------- */}
+        <li className={`nav-item nav-dropdown ${isBuyActive ? "active" : ""}`}>
           <span className="nav-dropdown-trigger">
             Buy
             <img
@@ -43,22 +79,36 @@ function Navbar() {
               className="nav-arrow"
               alt="dropdown"
             />
-
           </span>
 
           <ul className="nav-dropdown-menu">
             <li>
-              <h3>Buy with Crypto</h3>
-              <p>Crypto-to-crypto purchase</p>
+              <NavLink
+                to="/buy/with-crypto"
+                className={({ isActive }) =>
+                  isActive ? "dropdown-link active" : "dropdown-link"
+                }
+              >
+                <h3>Buy with Crypto</h3>
+                <p>Crypto-to-crypto purchase</p>
+              </NavLink>
             </li>
+
             <li>
-              <h3>Convert</h3>
-              <p>Instant crypto conversion</p>
+              <NavLink
+                to="/buy/convert"
+                className={({ isActive }) =>
+                  isActive ? "dropdown-link active" : "dropdown-link"
+                }
+              >
+                <h3>Convert</h3>
+                <p>Instant crypto conversion</p>
+              </NavLink>
             </li>
           </ul>
         </li>
 
-        {/* TOOLS */}
+        {/*------------------------------ -----TOOLS------------------------------------- */}
         <li className="nav-item nav-dropdown">
           <span className="nav-dropdown-trigger">
             Tools
@@ -67,45 +117,49 @@ function Navbar() {
               className="nav-arrow"
               alt="dropdown"
             />
-
           </span>
 
           <ul className="nav-dropdown-menu">
             <li>
-               <a href="https://in.tradingview.com/"
-              target="_blank"
-              className="nav-link"
-              rel="noopener noreferrer"
+              <a
+                href="https://in.tradingview.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
               >
-              <h3>TradingView</h3>
-              <p>Advanced charting tools</p>
+                <h3>TradingView</h3>
+                <p>Advanced charting tools</p>
               </a>
             </li>
+
             <li>
-               <a href="https://www.coinglass.com/"
-              target="_blank"
-              className="nav-link"
-              rel="noopener noreferrer"
+              <a
+                href="https://www.coinglass.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
               >
-              <h3>Coinglass</h3>
-              <p>Coinglass - Liquidity & liquidation data</p>
+                <h3>Coinglass</h3>
+                <p>Liquidity & liquidation data</p>
               </a>
             </li>
+
             <li>
-              <a href="https://intothecryptoverse.com/"
-              target="_blank"
-              className="nav-link"
-              rel="noopener noreferrer"
+              <a
+                href="https://intothecryptoverse.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
               >
-              
-              <h3>CryptoVerse</h3>
-              <p>On-chain & cycle analysis - Benjamin Cowen</p>
+                <h3>CryptoVerse</h3>
+                <p>On-chain & cycle analysis</p>
               </a>
             </li>
           </ul>
         </li>
       </ul>
 
+      {/*-------------------------- RIGHT MENU---------------------------------------------- */}
       <ul className="nav-menu nav-menu-right">
         <li>
           <button className="btn-primary">Sign In</button>
