@@ -1,101 +1,119 @@
 function Navbar() {
   return (
-    <nav>
-      <ul className="nav-left">
-        <li className="logo">
+    <nav className="navbar">
+      <ul className="nav-menu nav-menu-left">
+        <li className="nav-logo">
           <a href="/">
-            <img src="Essentials/Name.svg" alt="Liquidity-X" />
+            <img src="/Essentials/Name.svg" alt="Liquidity-X" />
           </a>
         </li>
 
         <li className="nav-item">Market</li>
 
         {/* TRADE */}
-        <li className="nav-item dropdown">
-          <span>
+        <li className="nav-item nav-dropdown">
+          <span className="nav-dropdown-trigger">
             Trade
             <img
-              src="Essentials/down-arrow.svg"
-              className="down-arrow"
-              alt=""
+              src="/Essentials/down-arrow.svg"
+              className="nav-arrow"
+              alt="dropdown"
             />
+
           </span>
 
-          <ul className="dropdown-menu">
+          <ul className="nav-dropdown-menu">
             <li>
-              <h3 className="dropdown-menu-li-header">Trade Spot</h3>
-              <p>Now buy crypto with USDT</p>
+              <h3>Trade Spot</h3>
+              <p>Buy crypto using USDT</p>
             </li>
             <li>
               <h3>Trade Futures</h3>
-              <p>Try Leverage Trading in USDT</p>
+              <p>Leverage trading in USDT</p>
             </li>
           </ul>
         </li>
 
         {/* BUY */}
-        <li className="nav-item dropdown">
-          <span>
+        <li className="nav-item nav-dropdown">
+          <span className="nav-dropdown-trigger">
             Buy
             <img
               src="/Essentials/down-arrow.svg"
-              className="down-arrow"
-              alt=""
+              className="nav-arrow"
+              alt="dropdown"
             />
+
           </span>
 
-          <ul className="dropdown-menu">
+          <ul className="nav-dropdown-menu">
             <li>
               <h3>Buy with Crypto</h3>
-              <p>Now buy crypto with Crypto</p>
+              <p>Crypto-to-crypto purchase</p>
             </li>
             <li>
-              <h3>Convert Crypto</h3>
-              <p>Crypto to Crypto Conversion becomes easier</p>
+              <h3>Convert</h3>
+              <p>Instant crypto conversion</p>
             </li>
           </ul>
         </li>
 
         {/* TOOLS */}
-        <li className="nav-item dropdown">
-          <span>
+        <li className="nav-item nav-dropdown">
+          <span className="nav-dropdown-trigger">
             Tools
             <img
-              src="Essentials/down-arrow.svg"
-              className="down-arrow"
-              alt=""
+              src="/Essentials/down-arrow.svg"
+              className="nav-arrow"
+              alt="dropdown"
             />
+
           </span>
 
-          <ul className="dropdown-menu">
+          <ul className="nav-dropdown-menu">
             <li>
-              <h3>Trading View</h3>
-              <p>Ultimate chart Viewer with mulitple options</p>
+               <a href="https://in.tradingview.com/"
+              target="_blank"
+              className="nav-link"
+              rel="noopener noreferrer"
+              >
+              <h3>TradingView</h3>
+              <p>Advanced charting tools</p>
+              </a>
             </li>
             <li>
+               <a href="https://www.coinglass.com/"
+              target="_blank"
+              className="nav-link"
+              rel="noopener noreferrer"
+              >
               <h3>Coinglass</h3>
-              <p>A powerful Tool for analysis of heatmaps , liqduidty and more</p>
+              <p>Coinglass - Liquidity & liquidation data</p>
+              </a>
             </li>
             <li>
+              <a href="https://intothecryptoverse.com/"
+              target="_blank"
+              className="nav-link"
+              rel="noopener noreferrer"
+              >
+              
               <h3>CryptoVerse</h3>
-              <p>Into the CryptoVerse - A Benjamin Cowen made tools</p>
-            </li>
-            <li>
-              <h3>CryptoBubbles</h3>
-              <p>Simplified version of showing all crypto prices in small bubbles to identify trends</p>
+              <p>On-chain & cycle analysis - Benjamin Cowen</p>
+              </a>
             </li>
           </ul>
         </li>
       </ul>
 
-      <ul className="ul-nav-right">
+      <ul className="nav-menu nav-menu-right">
         <li>
-          <button className="button1">Sign In / Login</button>
+          <button className="btn-primary">Sign In</button>
         </li>
-        <li className="lang-opt">English</li>
+        <li className="nav-language">English</li>
       </ul>
 
-      <div className="hamburger">☰</div>
+      <div className="nav-hamburger">☰</div>
     </nav>
   );
 }
