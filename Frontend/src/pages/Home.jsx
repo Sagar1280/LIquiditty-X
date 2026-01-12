@@ -1,3 +1,5 @@
+import Footer from "../components/Footer";
+
 function Home() {
   return (
     <>
@@ -78,6 +80,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </>
   );
 }

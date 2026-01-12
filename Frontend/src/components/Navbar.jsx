@@ -109,7 +109,7 @@ function Navbar() {
         </li>
 
         {/*------------------------------ -----TOOLS------------------------------------- */}
-        <li className="nav-item nav-dropdown">
+        <li className="nav-item nav-dropdown ">
           <span className="nav-dropdown-trigger">
             Tools
             <img
@@ -119,7 +119,7 @@ function Navbar() {
             />
           </span>
 
-          <ul className="nav-dropdown-menu">
+          <ul className="nav-dropdown-menu tools">
             <li>
               <a
                 href="https://in.tradingview.com/"
@@ -128,7 +128,7 @@ function Navbar() {
                 className="dropdown-link"
               >
                 <h3>TradingView</h3>
-                <p>Advanced charting tools</p>
+                <p>Super-charting platform for investors</p>
               </a>
             </li>
 
@@ -155,6 +155,43 @@ function Navbar() {
                 <p>On-chain & cycle analysis</p>
               </a>
             </li>
+
+            <li>
+              <a
+                href="https://coinmarketcap.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>CryptoMarketCap</h3>
+                <p>Wide Range of Cryptocurrencies Available to Track</p>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://defillama.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>DefiLamma</h3>
+                <p> Best for DeFi insight</p>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://dune.com/home"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>Dune Analytics</h3>
+                <p> All-in-one crypto data platform</p>
+              </a>
+            </li>
+
           </ul>
         </li>
       </ul>
