@@ -84,12 +84,12 @@ function Navbar() {
           <ul className="nav-dropdown-menu">
             <li>
               <NavLink
-                to="/buy/with-crypto"
+                to="/buy/depositUsdt"
                 className={({ isActive }) =>
                   isActive ? "dropdown-link active" : "dropdown-link"
                 }
               >
-                <h3>Buy with Crypto</h3>
+                <h3>Deposit Usdt</h3>
                 <p>Crypto-to-crypto purchase</p>
               </NavLink>
             </li>

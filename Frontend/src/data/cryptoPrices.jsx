@@ -48,3 +48,9 @@ export const futuresPairs = [
 ];
 
 
+export const cryptoPairs1 = [
+  { symbol: "BTC", logo: "https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=040" },
+  { symbol: "ETH", logo: "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=040" },
+  { symbol: "SOL", logo: "https://cryptologos.cc/logos/solana-sol-logo.svg?v=040" },
+  { symbol: "USDT", logo: "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040" },
+];

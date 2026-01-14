@@ -544,8 +544,8 @@ body {
     gap: 40px;
     padding: 20px;
     background: linear-gradient(180deg,
-    #2b3bb5 0%,
-    #3212a5 5%,
+    #000000 0%,
+    #8a53f6 40%,
     #000000 100%); 
     
 }
@@ -782,6 +782,250 @@ body {
   filter: brightness(0.9);
 }
 
+/*-------------------------convert -------------------------*/
+
+/* Container */
+.convert {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 60px);
+  background: #000; /* optional */
+}
+
+/* Panel */
+.convert-panel {
+  position: relative;
+  width: 520px;
+  min-height: 500px;
+  background: #111;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0px 3px 200px #8a53f6;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Tabs */
+.convert-tabs {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+}
+
+.convert-tabs button {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 15px;
+  cursor: pointer;
+  padding-bottom: 6px;
+  transition: 0.2s;
+}
+
+.convert-tabs button.active {
+  color: #fff;
+  border-bottom: 2px solid #8a53f6;
+}
+
+/* Section blocks */
+.convert-section {
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.09);
+  padding: 14px 18px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 30px;
+}
+
+/* Section header */
+.convert-section-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #999;
+}
+
+/* Balance text */
+.balance {
+  color: #777;
+}
+
+/* Body */
+.convert-section-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 20px;
+  color: white;
+}
+
+.asset {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Amount and MAX */
+.amount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.max-btn {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: #f0b90b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.max-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Swap arrow */
+.convert-swap {
+  align-self: center;
+  font-size: 22px;
+  background: #1f1f1f;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.convert-swap:hover {
+  background: #292929;
+}
+
+/* Button */
+.convert-btn {
+  position: absolute;
+  bottom: 20px;
+  margin-top: 4px;
+  width: 90%;
+  background: #8a53f6;
+  color: #000;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  padding: 14px 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.convert-btn:hover {
+  filter: brightness(0.75);
+}
 
 
+/*------------------------------------- deposit bar----------------------------------------------*/
+.deposit-container {
+  margin-top: 80px;
+  padding: 20px 40px;
+  color: white;
+}
+
+.deposit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.deposit-header h2 {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.deposit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.timer-box,
+.limit-box {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.deposit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.asset-card {
+  background: #111;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.asset-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.limit {
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.deposit-display {
+  padding: 10px;
+  background: #1d1d1d;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #fff;
+}
+
+.deposit-btn {
+  margin-top: auto;
+  background: #8a53f6;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.deposit-btn:hover {
+  filter: brightness(0.85);
+}
+.asset-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-icon {
+  width: 24px;
+  height: 24px;
+}
 

@@ -5,7 +5,10 @@ import Home from './pages/Home'
 import TradeSpot from './pages/spot/TradeSpot'
 import FuturesTrading from './pages/futures/FuturesTrading'
 import ConvertCrypto from './pages/buy/ConvertCrypto'
-import BuyWithCrypto from './pages/buy/BuywithCrypto'
+import DepositUsdt from "./pages/buy/DepositUsdt";
+
+
+
 
 const router = createBrowserRouter(
     [
@@ -21,7 +24,7 @@ const router = createBrowserRouter(
                     children: [
                         { index: true, element: <ConvertCrypto /> },
                         { path: 'convert', element: <ConvertCrypto /> },
-                        { path: 'with-crypto', element: <BuyWithCrypto /> },
+                        { path: 'depositUsdt', element: <DepositUsdt /> },
                     ],
                 },
             ],
