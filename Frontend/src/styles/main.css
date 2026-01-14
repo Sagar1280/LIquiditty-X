@@ -930,6 +930,23 @@ body {
   filter: brightness(0.75);
 }
 
+.leverage-btn,
+.leverage-type{
+    background-color: black;
+    color: grey;
+    border:1px solid rgba(255, 255, 255, 0.274);
+    padding: 10px 10px;
+    margin-right: 5px;
+    border-radius: 10px;
+
+}
+
+.futures-tx-order-type{
+    display: flex;
+    justify-content: space-between;
+
+}
+
 
 /*------------------------------------- deposit bar----------------------------------------------*/
 .deposit-container {
