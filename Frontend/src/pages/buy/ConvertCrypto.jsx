@@ -22,8 +22,12 @@ const ConvertCrypto = () => {
             </div>
             <div className="convert-section-body">
               <span className="asset">USDT</span>
-              <span className="amount">1234 <span className="max-btn">MAX</span></span>
+              <div className="convert-input">
+                <input ></input>
+              <span className="max-btn">MAX</span>
+              </div>
             </div>
+            
           </div>
 
           <div className="convert-swap">

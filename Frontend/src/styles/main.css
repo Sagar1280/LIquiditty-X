@@ -207,6 +207,15 @@ body {
   box-shadow: 0 2px 10px rgba(132, 0, 255, 0.687);
 }
 
+.login-welcome {
+  color: #bfaaff;
+  font-weight: 600;
+  font-size: 14.5px;
+  background: rgba(127, 92, 255, 0.15);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(127, 92, 255, 0.35);
+}
 
 
 
@@ -925,6 +934,19 @@ body {
   cursor: pointer;
   transition: 0.2s;
 }
+.convert-input{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.convert-input > input{
+  background-color: #141414;
+  border: none;
+  border-radius: 5px;
+  width: 50%;
+  color: white;
+  font-size: 30px;
+}
 
 .convert-btn:hover {
   filter: brightness(0.75);
@@ -1119,6 +1141,7 @@ body {
   flex-direction: column;
   gap: 16px;
   margin-top: 6px;
+  height: 350px;
 }
 
 /* Inputs */
