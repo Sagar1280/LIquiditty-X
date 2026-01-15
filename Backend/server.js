@@ -2,19 +2,31 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.js";
+
 
 dotenv.config();
-const app= express();
+const app = express();
+connectDB();
 
-app.use(cors());
+
+
+app.use(cors({
+    origin: "http://localhost:5173", // front end to backend connection ,,                        
+    credentials: true                // credentials = true signifies allowed
+}));
+
 app.use(express.json());
 
-app.get('/',(req,res)=>{
+app.use(cookieParser()); // need for refresh tokens
+
+app.get('/', (req, res) => {
     res.send("backend working !!");
 })
 
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("Mongo DataBase Connected !!!"))
-.catch((err)=> console.log(err));
+app.use("/api/auth" , authRoutes);
 
-app.listen(5000, ()=> console.log("server started and running on port 5000"));
+const PORT = process.env.PORT;
+app.listen(PORT, () => console.log(`server started and running on port ${PORT}`));
