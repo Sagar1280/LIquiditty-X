@@ -24,7 +24,7 @@ export const useAuthStore = create((set, get) => ({
 
       set({
         accessToken: res.data.accessToken,
-        email: res.data.email,
+        email: res.data.user.email,
         authModal: null,
       });
       
