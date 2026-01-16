@@ -6,6 +6,7 @@ const Sidebar = ({ data }) => {
 
   const setPair = useMarketStore((s) => s.setPair);
   const selectedPair = useMarketStore((s) => s.selectedPair);
+  const prices = useMarketStore((s) => s.prices);
 
 
   return (
@@ -23,6 +24,8 @@ const Sidebar = ({ data }) => {
 
           // convert "BTC/USDT" → "BTCUSDT"
           const symbol = pair.symbol.replace("/", "");
+          const priceData = prices[symbol];
+
 
           return (
             <div
@@ -42,15 +45,21 @@ const Sidebar = ({ data }) => {
               </div>
 
               <div className="pair-price">
-                ${Number(pair.price).toLocaleString()}
+                {priceData
+                  ? `$${Number(priceData.price).toLocaleString()}`
+                  : "--"}
+
               </div>
 
               <div
-                className={`pair-change ${pair.change >= 0 ? "pos" : "neg"}`}
+                className={`pair-change ${priceData?.change >= 0 ? "pos" : "neg"
+                  }`}
               >
-                {pair.change > 0 && "+"}
-                {pair.change}%
+                {priceData
+                  ? `${priceData.change > 0 ? "+" : ""}${priceData.change}%`
+                  : "--"}
               </div>
+
             </div>
           );
         })}

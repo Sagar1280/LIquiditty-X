@@ -82,7 +82,77 @@ function Navbar() {
             <img src="/Essentials/down-arrow.svg" className="nav-arrow" alt="dropdown" />
           </span>
           <ul className="nav-dropdown-menu tools">
-            {/* same links you already had */}
+             <li>
+              <a
+                href="https://in.tradingview.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>TradingView</h3>
+                <p>Super-charting platform for investors</p>
+              </a>
+            </li>
+             <li>
+              <a
+                href="https://www.coinglass.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>Coinglass</h3>
+                <p>Liquidity & liquidation data</p>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://intothecryptoverse.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>CryptoVerse</h3>
+                <p>On-chain & cycle analysis</p>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://coinmarketcap.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>CryptoMarketCap</h3>
+                <p>Wide Range of Cryptocurrencies Available to Track</p>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://defillama.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>DefiLamma</h3>
+                <p> Best for DeFi insight</p>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://dune.com/home"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dropdown-link"
+              >
+                <h3>Dune Analytics</h3>
+                <p> All-in-one crypto data platform</p>
+              </a>
+            </li>
+            
           </ul>
         </li>
 

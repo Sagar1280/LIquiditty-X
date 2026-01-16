@@ -3,6 +3,7 @@ import AuthModal from "../components/AuthModal.jsx";
 import { Outlet } from 'react-router-dom';
 import { useAuthStore } from "../store/authStore";
 import { useEffect } from "react";
+import { startMarketSocket } from "../data/marketSocket.js";
 
 
 
@@ -13,6 +14,8 @@ const Rootlayout = () => {
 
   useEffect(() => {
     restoreSession();
+
+    startMarketSocket();
   }, []);
 
 
