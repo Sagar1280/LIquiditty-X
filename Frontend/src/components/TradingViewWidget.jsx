@@ -1,49 +1,54 @@
-// TradingViewWidget.jsx
-import React, { useEffect, useRef, memo } from 'react';
+import { useEffect, useRef } from "react";
+import { useMarketStore } from "../store/marketStore";
+import { useLocation } from "react-router-dom";
 
-function TradingViewWidget() {
-  const container = useRef();
+const TradingViewWidget = () => {
 
-  useEffect(
-    () => {
-      // Check if script is already added to avoid duplicates
-      if (container.current.querySelector("script")) return;
 
-      const script = document.createElement("script");
-      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-      script.type = "text/javascript";
-      script.async = true;
-      script.innerHTML = `
-        {
-          "autosize": true,
-          "symbol": "BINANCE:BTCUSDT",
-          "interval": "D",
-          "timezone": "Etc/UTC",
-          "theme": "dark",
-          "style": "1",
-          "locale": "en",
-          "enable_publishing": false,
-          "allow_symbol_change": true,
-          "calendar": false,
-          "support_host": "https://www.tradingview.com"
-        }`;
-      container.current.appendChild(script);
-    },
-    []
-  );
+  const containerRef = useRef(null);
+
+  const location = useLocation();
+
+  const selectedPair = useMarketStore((s) => s.selectedPair);
+
+  const isFutures = location.pathname.startsWith("/futures");
+
+
+  useEffect(() => {
+
+    if (!containerRef.current) return;
+
+    containerRef.current.innerHTML = "";
+
+    const script = document.createElement("script");
+    script.src =
+      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.async = true;
+
+    // TradingView configuration
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: isFutures ? `BINANCE:${selectedPair}.P` : `BINANCE:${selectedPair}`,
+      interval: "15",
+      timezone: "Etc/UTC",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      allow_symbol_change: false,
+    });
+
+   
+    containerRef.current.appendChild(script);
+
+  }, [selectedPair]);
 
   return (
-    <div 
-      className="tradingview-widget-container" 
-      ref={container} 
-      style={{ height: "100%", width: "100%" }} // CRITICAL for responsiveness
-    >
-      <div 
-        className="tradingview-widget-container__widget" 
-        style={{ height: "calc(100% - 32px)", width: "100%" }} 
-      ></div>
-    </div>
+    <div
+      className="tradingview-widget-container"
+      ref={containerRef}
+      style={{ height: "100%", width: "100%" }}
+    />
   );
-}
+};
 
-export default memo(TradingViewWidget);
+export default TradingViewWidget;

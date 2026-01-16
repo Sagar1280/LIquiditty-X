@@ -640,6 +640,13 @@ body {
   background-color: rgba(255,255,255,0.08);
 }
 
+/* Highlight active trading pair */
+.active-pair {
+  background: rgba(138, 83, 246, 0.25);
+  border-left: 3px solid #8a53f6;
+}
+
+
 /* separator */
 .pair-row:not(:last-child) {
   border-bottom: 1px solid rgba(255,255,255,0.07);
