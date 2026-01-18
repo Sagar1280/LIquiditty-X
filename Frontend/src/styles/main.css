@@ -822,6 +822,25 @@ body {
   filter: brightness(0.9);
 }
 
+.tx-estimate {
+  margin-top: 1px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+}
+
+.tx-balance {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.tx-input-error {
+  border: 1px solid #f6465d;
+  box-shadow: 0 0 8px rgba(246, 70, 93, 0.9);
+  border-radius: 4px;
+}
 
 
 /*-------------------------convert -------------------------*/
