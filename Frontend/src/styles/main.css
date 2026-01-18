@@ -674,12 +674,9 @@ body {
 }
 
 /*-----------------------------Transaction Bar-------------------------------------*/
-
-.tradespot .main .TransactionBar {
-  position: relative;
+.TransactionBar {
   width: 100%;
-  max-width: 1000px;
-  margin-top: 16px;
+  margin: 10px 0 10px 0;
   background: #0e0e0e;
   border-radius: 10px;
   padding: 14px 12px;
@@ -689,7 +686,14 @@ body {
   gap: 14px;
 }
 
-/* ORDER TABS */
+/* Top row */
+.futures-tx-order-type {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Order type tabs */
 .tx-order-type {
   display: flex;
   gap: 14px;
@@ -716,7 +720,7 @@ body {
 }
 
 .tx-type.active::after {
-  content: "";
+  content: " ";
   position: absolute;
   bottom: -3px;
   left: 0;
@@ -726,7 +730,24 @@ body {
   border-radius: 2px;
 }
 
-/* INPUT BOXES */
+/* Leverage (futures only) */
+.tx-leverage {
+  display: flex;
+  gap: 8px;
+}
+
+.leverage-type,
+.leverage-btn {
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #eaeaea;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Inputs */
 .tx-input {
   background: #141414;
   border: 1px solid rgba(255,255,255,0.08);
@@ -753,20 +774,24 @@ body {
   color: rgba(255,255,255,0.35);
 }
 
+.tx-input input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .tx-input-suffix {
   font-size: 13px;
   color: rgba(255,255,255,0.55);
   flex-shrink: 0;
 }
 
-/* BALANCE */
+/* Balance */
 .tx-balance {
   font-size: 13px;
   color: rgba(255,255,255,0.48);
-  margin-top: -4px;
 }
 
-/* FOOT BUY/SELL ACTIONS */
+/* Actions */
 .tx-actions {
   display: flex;
   gap: 12px;
@@ -793,10 +818,11 @@ body {
   color: white;
 }
 
-.tx-btn-buy:hover,
-.tx-btn-sell:hover {
+.tx-actions button:hover {
   filter: brightness(0.9);
 }
+
+
 
 /*-------------------------convert -------------------------*/
 
