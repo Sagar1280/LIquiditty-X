@@ -676,7 +676,7 @@ body {
 /*-----------------------------Transaction Bar-------------------------------------*/
 .TransactionBar {
   width: 100%;
-  margin: 10px 0 10px 0;
+  margin: 10px 0;
   background: #0e0e0e;
   border-radius: 10px;
   padding: 14px 12px;
@@ -686,14 +686,12 @@ body {
   gap: 14px;
 }
 
-/* Top row */
 .futures-tx-order-type {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Order type tabs */
 .tx-order-type {
   display: flex;
   gap: 14px;
@@ -720,7 +718,7 @@ body {
 }
 
 .tx-type.active::after {
-  content: " ";
+  content: "";
   position: absolute;
   bottom: -3px;
   left: 0;
@@ -730,7 +728,6 @@ body {
   border-radius: 2px;
 }
 
-/* Leverage (futures only) */
 .tx-leverage {
   display: flex;
   gap: 8px;
@@ -747,7 +744,6 @@ body {
   cursor: pointer;
 }
 
-/* Inputs */
 .tx-input {
   background: #141414;
   border: 1px solid rgba(255,255,255,0.08);
@@ -758,6 +754,7 @@ body {
   padding: 0 10px;
   justify-content: space-between;
   gap: 10px;
+  transition: border 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tx-input input {
@@ -785,13 +782,28 @@ body {
   flex-shrink: 0;
 }
 
-/* Balance */
-.tx-balance {
-  font-size: 13px;
-  color: rgba(255,255,255,0.48);
+
+.tx-input-suffix.clickable {
+  cursor: pointer;
+  font-weight: 600;
+  color: #f0b90b;
 }
 
-/* Actions */
+
+.tx-input-error {
+  border: 1px solid #f6465d !important;
+  box-shadow: 0 0 10px rgba(246, 70, 93, 0.85);
+}
+
+
+.tx-balance {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+}
+
+
 .tx-actions {
   display: flex;
   gap: 12px;
@@ -818,28 +830,24 @@ body {
   color: white;
 }
 
-.tx-actions button:hover {
-  filter: brightness(0.9);
+
+.tx-actions button:hover:not(:disabled) {
+  filter: brightness(0.92);
 }
+
+
+.tx-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: none;
+}
+
 
 .tx-estimate {
   margin-top: 1px;
   font-size: 13px;
   color: rgba(255,255,255,0.6);
   text-align: center;
-}
-
-.tx-balance {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  opacity: 0.85;
-}
-
-.tx-input-error {
-  border: 1px solid #f6465d;
-  box-shadow: 0 0 8px rgba(246, 70, 93, 0.9);
-  border-radius: 4px;
 }
 
 

@@ -8,6 +8,7 @@ const TransactionBar = ({ mode = "spot" }) => {
   // UI-only state
   const [orderType, setOrderType] = useState("market"); // market | limit
   const [amount, setAmount] = useState("");
+  const [inputAsset, setInputAsset] = useState("USDT"); // USDT | BASE
 
   // selected pair from global market store
   const selectedPair = useMarketStore((s) => s.selectedPair);
@@ -15,28 +16,34 @@ const TransactionBar = ({ mode = "spot" }) => {
 
   const price = prices[selectedPair]?.price;
 
-  const estimatedQuantity =
-    amount && price ? Number(amount) / Number(price) : null;
-
   // BTCUSDT → BTC/USDT
-  const displayPair = selectedPair.replace("USDT", "/USDT");
-
-  // base coin (BTCUSDT -> BTC)
   const baseCoin = selectedPair.replace("USDT", "");
+  const displayPair = `${baseCoin}/USDT`;
 
   // balances
   const balances = useWalletStore((s) => s.balances);
   const usdtBalance = balances["USDT"] ?? 0;
   const baseCoinBalance = balances[baseCoin] ?? 0;
-  const usdtInsufficientBalance = Number(amount) > Number(usdtBalance);
 
+  const isBuyMode = inputAsset === "USDT";
+  const isSellMode = inputAsset === baseCoin;
 
+  // balance validation
+  const isInsufficientBalance = isBuyMode
+    ? Number(amount) > usdtBalance
+    : Number(amount) > baseCoinBalance;
+
+  // quantity estimate
+  const estimatedQuantity =
+    isBuyMode && amount && price
+      ? (Number(amount) / price).toFixed(6)
+      : isSellMode
+      ? Number(amount || 0).toFixed(6)
+      : "0.000000";
 
   return (
     <div className="TransactionBar">
-
       <div className="futures-tx-order-type">
-
         <div className="tx-order-type">
           <button
             className={`tx-type ${orderType === "market" ? "active" : ""}`}
@@ -67,57 +74,56 @@ const TransactionBar = ({ mode = "spot" }) => {
           placeholder={orderType === "market" ? "Market Price" : "Price"}
           disabled={orderType === "market"}
         />
-
         {orderType === "market" && (
           <div className="tx-input-suffix">Market</div>
         )}
       </div>
 
-      <div className="tx-input">
+      {/* AMOUNT INPUT */}
+      <div className={`tx-input ${isInsufficientBalance ? "tx-input-error" : ""}`}>
         <input
           type="number"
           min="0"
-          placeholder="Amount"
+          placeholder={`Amount (${inputAsset})`}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        <div className="tx-input-suffix">USDT</div>
+        <div
+          className="tx-input-suffix clickable"
+          onClick={() =>
+            setInputAsset(inputAsset === "USDT" ? baseCoin : "USDT")
+          }
+        >
+          {inputAsset}
+        </div>
       </div>
 
       {/* BALANCES */}
       <div className="tx-balance">
-        <span>
-          Available: {usdtBalance.toLocaleString()} USDT
-        </span>
-
-        <span>
-          {baseCoinBalance.toLocaleString()} {baseCoin}
-        </span>
+        <span>Available: {usdtBalance.toLocaleString()} USDT</span>
+        <span>{baseCoinBalance.toLocaleString()} {baseCoin}</span>
       </div>
 
+      {/* ACTIONS */}
       <div className="tx-actions">
-        <button className="tx-btn-buy">
-          <div>
-            {isFutures ? `Long ${displayPair}` : `Buy ${displayPair.replace("/USDT" ,"")}`}
-          </div>
+        <button
+          className="tx-btn-buy"
+          disabled={!isBuyMode || isInsufficientBalance || !amount}
+        >
+          <div>{isFutures ? `Long ${displayPair}` : `Buy ${baseCoin}`}</div>
           <div className="tx-estimate">
-            {estimatedQuantity
-              ? estimatedQuantity.toFixed(6)
-              : "0.000000"}{" "}
-            {baseCoin}
+            {estimatedQuantity} {baseCoin}
           </div>
         </button>
 
-        <button className="tx-btn-sell">
-          <div>
-            {isFutures ? `Short ${displayPair}` : `Sell ${displayPair.replace("/USDT" ,"")}`}
-          </div>
+        <button
+          className="tx-btn-sell"
+          disabled={!isSellMode || isInsufficientBalance || !amount}
+        >
+          <div>{isFutures ? `Short ${displayPair}` : `Sell ${baseCoin}`}</div>
           <div className="tx-estimate">
-            {estimatedQuantity
-              ? estimatedQuantity.toFixed(6)
-              : "0.000000"}{" "}
-            {baseCoin}
+            {estimatedQuantity} {baseCoin}
           </div>
         </button>
       </div>
