@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
+import walletRoutes from "./routes/wallet.js";
 
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/auth" , authRoutes);
+app.use("/wallet", walletRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`server started and running on port ${PORT}`));

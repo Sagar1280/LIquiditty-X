@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User.js";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import Wallet from "../models/Wallet.js";
 
 const router = express.Router();
 
@@ -18,11 +19,18 @@ router.post("/signup", async (req, res) => {
       type: argon2.argon2id,
     });
 
-    await User.create({
+    const user = await User.create({
       email,
       password: hashed,
       refreshToken: null,
     });
+
+    const wallet = new Wallet({
+      user : user._id,
+    })
+
+    wallet.balances.set("USDT",10000);
+    await wallet.save(); 
 
     return res.json({ msg: "Signup Success!" });
 
@@ -127,5 +135,6 @@ router.post("/logout", async (req, res) => {
 
   return res.json({ msg: "Logged out" });
 });
+
 
 export default router;

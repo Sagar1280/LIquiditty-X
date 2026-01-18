@@ -1,14 +1,16 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { useWalletStore } from "../store/walletStore";
+import { useEffect } from "react";
 
 function Navbar() {
 
   const location = useLocation();
-
   // Zustand auth state
-  const { accessToken, email, logout, openAuth } = useAuthStore();
 
-  // Detect parent tab active
+  const { accessToken, email, logout, openAuth } = useAuthStore();  
+
+  // Detect parent tab active 
   const isTradeActive =
     location.pathname.startsWith("/spot") ||
     location.pathname.startsWith("/futures");
