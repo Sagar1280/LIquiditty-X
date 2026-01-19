@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useMarketStore } from "../store/marketStore";
 import { useWalletStore } from "../store/walletStore";
+import { useAuthStore } from "../store/authStore";
+import axios from "axios";
 
 const TransactionBar = ({ mode = "spot" }) => {
   const isFutures = mode === "futures";
@@ -25,8 +27,10 @@ const TransactionBar = ({ mode = "spot" }) => {
   const usdtBalance = balances["USDT"] ?? 0;
   const baseCoinBalance = balances[baseCoin] ?? 0;
 
+
   const isBuyMode = inputAsset === "USDT";
   const isSellMode = inputAsset === baseCoin;
+
 
   // balance validation
   const isInsufficientBalance = isBuyMode
@@ -38,8 +42,69 @@ const TransactionBar = ({ mode = "spot" }) => {
     isBuyMode && amount && price
       ? (Number(amount) / price).toFixed(6)
       : isSellMode
-      ? Number(amount || 0).toFixed(6)
-      : "0.000000";
+        ? Number(amount || 0).toFixed(6)
+        : "0.000000";
+
+  const fetchWallet = useWalletStore((s) => s.fetchWallet);
+  const { accessToken, refresh } = useAuthStore();
+
+  const executeTrade = async (side) => {
+  try {
+    const { accessToken } = useAuthStore.getState();
+
+    await axios.post(
+      "/trade/spot",
+      {
+        side,
+        baseCoin,
+        amount: Number(amount),
+        price,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    fetchWallet();
+    setAmount("");
+
+  } catch (err) {
+    if (err.response?.status === 401) {
+      const refreshed = await useAuthStore.getState().refresh();
+
+      if (refreshed) {
+        // 🔥 retry ONCE with NEW token
+        const { accessToken: newToken } = useAuthStore.getState();
+
+        await axios.post(
+          "/trade/spot",
+          {
+            side,
+            baseCoin,
+            amount: Number(amount),
+            price,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${newToken}`,
+            },
+          }
+        );
+
+        fetchWallet();
+        setAmount("");
+        return;
+      }
+    }
+
+    console.error("Trade failed:", err);
+  }
+};
+
+  
+
 
   return (
     <div className="TransactionBar">
@@ -110,6 +175,7 @@ const TransactionBar = ({ mode = "spot" }) => {
         <button
           className="tx-btn-buy"
           disabled={!isBuyMode || isInsufficientBalance || !amount}
+          onClick={() => executeTrade("BUY")}
         >
           <div>{isFutures ? `Long ${displayPair}` : `Buy ${baseCoin}`}</div>
           <div className="tx-estimate">
@@ -120,6 +186,7 @@ const TransactionBar = ({ mode = "spot" }) => {
         <button
           className="tx-btn-sell"
           disabled={!isSellMode || isInsufficientBalance || !amount}
+          onClick={() => executeTrade("SELL")}
         >
           <div>{isFutures ? `Short ${displayPair}` : `Sell ${baseCoin}`}</div>
           <div className="tx-estimate">

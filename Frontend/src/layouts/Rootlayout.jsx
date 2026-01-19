@@ -22,8 +22,8 @@ const Rootlayout = () => {
 
   useEffect(() => {
   if (accessToken) {
-    fetchWallet(accessToken);
-  }}, [accessToken]);
+    fetchWallet();
+  }}, [accessToken,fetchWallet]);
 
    /// using two useEffect because of race contions ,, first acces token is generated and
    //  then wallet is fetched
