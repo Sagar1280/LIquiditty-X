@@ -1,69 +1,46 @@
 import { useMarketStore } from "../store/marketStore";
 
+const SPOT_WS = "wss://stream.binance.com:9443/stream";
+const FUTURES_WS = "wss://fstream.binance.com/stream";
 
-// Binance WebSocket base URL
-const BINANCE_WS = "wss://stream.binance.com:9443/stream";
 
-// symbols we want prices for
 const symbols = [
-  "btcusdt",
-  "ethusdt",
-  "solusdt",
-  "bnbusdt",
-  "xrpusdt",
-  "adausdt",
-  "dogeusdt",
-  "avaxusdt",
-  "trxusdt",
-  "xlmusdt",
-  "linkusdt",
-  "suiusdt",
-  "bchusdt",
-  "hbarusdt",
-  "ltcusdt",
-  "nearusdt",
-  "pepeusdt",
-  "uniusdt",
-  "apt/usdt",
-  "aptusdt",
-  "icpusdt",
+  "btcusdt", "ethusdt", "solusdt", "bnbusdt", "xrpusdt", "adausdt",
+  "dogeusdt", "avaxusdt", "trxusdt", "xlmusdt", "linkusdt", "suiusdt",
+  "bchusdt", "hbarusdt", "ltcusdt", "nearusdt", "pepeusdt", "uniusdt",
+  "aptusdt", "icpusdt",
 ];
 
-// build combined stream URL
-const streamUrl =
-  BINANCE_WS +
-  "?streams=" +
-  symbols.map((s) => `${s}@ticker`).join("/");
+const buildUrl = (base) =>
+  base + "?streams=" + symbols.map((s) => `${s}@ticker`).join("/");
 
-// start WebSocket connection
-export const startMarketSocket = () => {
+let socket = null;
 
-  const socket = new WebSocket(streamUrl);
+export const startMarketSocket = (mode = "spot") => {
+  if (socket) socket.close(); // 🔥 close previous socket
+
+  const url = mode === "futures"
+    ? buildUrl(FUTURES_WS)
+    : buildUrl(SPOT_WS);
+
+  socket = new WebSocket(url);
 
   socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    const data = message.data;
-
+    const msg = JSON.parse(event.data);
+    const data = msg.data;
     if (!data) return;
 
-    const symbol = data.s.toUpperCase(); // BTCUSDT
-    const price = parseFloat(data.c);    // last price
-    const change = parseFloat(data.P);   // 24h %
-
-    // update Zustand store
-    useMarketStore.getState().updatePrice(symbol, {
-      price,
-      change,
-    });
+    useMarketStore.getState().updatePrice(
+      data.s.toUpperCase(),
+      {
+        price: parseFloat(data.c),
+        change: parseFloat(data.P),
+      }
+    );
   };
 
-  socket.onerror = (err) => {
-    console.error("Market WebSocket error", err);
-  };
-
-  socket.onclose = () => {
-    console.warn("Market WebSocket closed");
-  };
+  socket.onerror = (err) => console.error("Market WS error", err);
+  socket.onclose = () => console.warn("Market WS closed");
 
   return socket;
 };

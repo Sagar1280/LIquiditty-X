@@ -2,6 +2,9 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useWalletStore } from "../store/walletStore";
 import { useEffect } from "react";
+import { useMarketStore } from "../store/marketStore";
+
+
 
 function Navbar() {
 
@@ -16,6 +19,9 @@ function Navbar() {
     location.pathname.startsWith("/futures");
 
   const isBuyActive = location.pathname.startsWith("/buy");
+  const marketMode = useMarketStore((s) => s.marketMode);
+  const setMarketMode = useMarketStore((s) => s.setMarketMode);
+
 
   return (
     <nav className="navbar">
@@ -40,13 +46,19 @@ function Navbar() {
 
           <ul className="nav-dropdown-menu">
             <li>
-              <NavLink to="/spot" className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"}>
+              <NavLink to="/spot" 
+              onClick={() => setMarketMode("spot")}
+              className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"
+              }>
                 <h3>Trade Spot</h3>
                 <p>Buy crypto using USDT</p>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/futures" className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"}>
+              <NavLink to="/futures" 
+              onClick={() => setMarketMode("futures")}
+              className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"}
+              >
                 <h3>Trade Futures</h3>
                 <p>Leverage trading in USDT</p>
               </NavLink>

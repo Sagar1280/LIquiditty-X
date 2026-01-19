@@ -3,12 +3,13 @@ import { create } from "zustand";
 export const useMarketStore = create((set) => ({
 
   selectedPair: "BTCUSDT",
+  marketMode : "spot",
 
 
   prices: {},
 
-
   setPair: (pair) => set({ selectedPair: pair }),
+  setMarketMode: (mode) => set({ marketMode: mode }),
 
   // update price for ONE symbol
   updatePrice: (symbol, data) =>
@@ -18,5 +19,7 @@ export const useMarketStore = create((set) => ({
         [symbol]: data,
       },
     })),
+
+  clearPrices: () => set({ prices: {} }),
 
 }));

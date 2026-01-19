@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useMarketStore } from "../store/marketStore";
+import { startMarketSocket } from "../data/marketSocket";
 import { useWalletStore } from "../store/walletStore";
 import { useAuthStore } from "../store/authStore";
 import axios from "axios";
 
+
 const TransactionBar = ({ mode = "spot" }) => {
   const isFutures = mode === "futures";
+  const setMarketMode = useMarketStore((s)=> s.setMarketMode);
 
   // UI-only state
   const [orderType, setOrderType] = useState("market"); // market | limit
