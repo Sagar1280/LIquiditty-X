@@ -11,7 +11,7 @@ function Navbar() {
   const location = useLocation();
   // Zustand auth state
 
-  const { accessToken, email, logout, openAuth } = useAuthStore();  
+  const { accessToken, email, logout, openAuth } = useAuthStore();
 
   // Detect parent tab active 
   const isTradeActive =
@@ -46,18 +46,18 @@ function Navbar() {
 
           <ul className="nav-dropdown-menu">
             <li>
-              <NavLink to="/spot" 
-              onClick={() => setMarketMode("spot")}
-              className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"
-              }>
+              <NavLink to="/spot"
+                onClick={() => setMarketMode("spot")}
+                className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"
+                }>
                 <h3>Trade Spot</h3>
                 <p>Buy crypto using USDT</p>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/futures" 
-              onClick={() => setMarketMode("futures")}
-              className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"}
+              <NavLink to="/futures"
+                onClick={() => setMarketMode("futures")}
+                className={({ isActive }) => isActive ? "dropdown-link active" : "dropdown-link"}
               >
                 <h3>Trade Futures</h3>
                 <p>Leverage trading in USDT</p>
@@ -89,6 +89,54 @@ function Navbar() {
           </ul>
         </li>
 
+        {/* WALLET */}
+        <li className="nav-item nav-dropdown">
+          <span className="nav-dropdown-trigger">
+            Wallet
+            <img
+              src="/Essentials/down-arrow.svg"
+              className="nav-arrow"
+              alt="dropdown"
+            />
+          </span>
+
+          <ul className="nav-dropdown-menu">
+            {/* Future extensions */}
+            <li>
+              <NavLink
+                to="/wallet/spot"
+                className="dropdown-link"
+              >
+                <h3>Spot Wallet</h3>
+                <p>View spot balances</p>
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/wallet/futures"
+                className="dropdown-link"
+              >
+                <h3>Futures Wallet</h3>
+                <p>View futures margin</p>
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/wallet/transfer"
+                className={({ isActive }) =>
+                  isActive ? "dropdown-link active" : "dropdown-link"
+                }
+              >
+                <h3>Transfer</h3>
+                <p>Move funds between Spot & Futures</p>
+              </NavLink>
+            </li>
+          </ul>
+        </li>
+
+
         {/* TOOLS */}
         <li className="nav-item nav-dropdown">
           <span className="nav-dropdown-trigger">
@@ -96,7 +144,7 @@ function Navbar() {
             <img src="/Essentials/down-arrow.svg" className="nav-arrow" alt="dropdown" />
           </span>
           <ul className="nav-dropdown-menu tools">
-             <li>
+            <li>
               <a
                 href="https://in.tradingview.com/"
                 target="_blank"
@@ -107,7 +155,7 @@ function Navbar() {
                 <p>Super-charting platform for investors</p>
               </a>
             </li>
-             <li>
+            <li>
               <a
                 href="https://www.coinglass.com/"
                 target="_blank"
@@ -166,7 +214,7 @@ function Navbar() {
                 <p> All-in-one crypto data platform</p>
               </a>
             </li>
-            
+
           </ul>
         </li>
 

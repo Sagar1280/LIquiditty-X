@@ -29,7 +29,7 @@ router.post("/signup", async (req, res) => {
       user : user._id,
     })
 
-    wallet.balances.set("USDT",10000);
+    wallet.wallets.spot.set("USDT",10000);
     await wallet.save(); 
 
     return res.json({ msg: "Signup Success!" });

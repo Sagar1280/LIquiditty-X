@@ -6,20 +6,25 @@ const WalletSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true, // one spot wallet per user
+      unique: true,
     },
 
-    // Dynamic balances map
+    wallets: {
+      spot: {
+        type: Map,
+        of: Number,
+        default: () => new Map(), // 🔥 fully dynamic
+      },
 
-    balances: {
-      type: Map,
-      of: Number,
-      default: () => ({
-        
-       }),
+      futures: {
+        type: Map,
+        of: Number,
+        default: () => new Map(), // 🔥 fully dynamic
+      },
     },
   },
   { timestamps: true }
 );
 
 export default mongoose.model("Wallet", WalletSchema);
+``

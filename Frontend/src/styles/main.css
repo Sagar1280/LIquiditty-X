@@ -1004,8 +1004,18 @@ body {
   border: none;
   border-radius: 5px;
   width: 50%;
-  color: white;
+  color: rgb(255, 255, 255);
   font-size: 30px;
+  text-align: right;
+  margin-right: 4px;
+  outline: none;
+  
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .convert-btn:hover {

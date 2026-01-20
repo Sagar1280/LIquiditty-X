@@ -3,6 +3,7 @@ import { create } from "zustand";
 export const useMarketStore = create((set) => ({
 
   selectedPair: "BTCUSDT",
+  
   marketMode : "spot",
 
 

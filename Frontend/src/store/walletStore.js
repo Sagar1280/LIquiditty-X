@@ -3,20 +3,33 @@ import axios from "axios";
 import { useAuthStore } from "./authStore";
 
 export const useWalletStore = create((set, get) => ({
-  balances: {},
+  // 🔥 Separate wallets
+  balances: {
+    spot: {},
+    futures: {},
+  },
+
   loading: false,
 
-  updateBalance: (asset, amount) =>
-    set((state) => ({
+  /* ---------------- SETTERS ---------------- */
+
+  setBalances: (spotBalances, futuresBalances) =>
+    set({
       balances: {
-        ...state.balances,
-        [asset]: (state.balances[asset] || 0) + amount,
+        spot: spotBalances,
+        futures: futuresBalances,
       },
-    })),
+    }),
 
-  setBalances: (balances) => set({ balances}),
+  clearWallet: () =>
+    set({
+      balances: {
+        spot: {},
+        futures: {},
+      },
+    }),
 
-  clearWallet: () => set({ balances: {} }),
+  /* ---------------- FETCH WALLET ---------------- */
 
   fetchWallet: async () => {
     const { accessToken, refresh } = useAuthStore.getState();
@@ -34,25 +47,59 @@ export const useWalletStore = create((set, get) => ({
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      
+      set({
+        balances: {
+          spot: res.data.spot || {},
+          futures: res.data.futures || {},
+        },
+      });
 
-      console.log("📦 Wallet(fetched) API response:", res.data);
-
-      // backend already returns balances object
-      set({ balances: res.data.balances });
+      console.log("📦 Wallet fetched:", res.data);
 
     } catch (err) {
-      // 🔄 auto refresh on token expiry
       if (err.response?.status === 401) {
         const refreshed = await refresh();
         if (refreshed) {
-          return get().fetchWallet();
+          return get().fetchWallet(); // 🔁 retry ONCE
         }
       }
 
-      console.error("Wallet fetch failed", err);
-      set({ balances: {} });
+      console.error("Wallet fetch failed:", err);
+      get().clearWallet();
+
     } finally {
       set({ loading: false });
+    }
+  },
+
+  /* ---------------- WALLET TRANSFER (OPTIONAL, FUTURE) ---------------- */
+
+  transferFunds: async ({ from, to, asset, amount }) => {
+    const { accessToken, refresh } = useAuthStore.getState();
+
+    try {
+      await axios.post(
+        "/wallet/transfer",
+        { from, to, asset, amount },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      await get().fetchWallet();
+
+    } catch (err) {
+      if (err.response?.status === 401) {
+        const refreshed = await refresh();
+        if (refreshed) {
+          return get().transferFunds({ from, to, asset, amount });
+        }
+      }
+
+      console.error("Wallet transfer failed", err);
     }
   },
 }));

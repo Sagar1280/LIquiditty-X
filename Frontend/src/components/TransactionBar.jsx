@@ -1,115 +1,110 @@
 import { useState } from "react";
-import { useEffect } from "react";
 import { useMarketStore } from "../store/marketStore";
-import { startMarketSocket } from "../data/marketSocket";
 import { useWalletStore } from "../store/walletStore";
 import { useAuthStore } from "../store/authStore";
 import axios from "axios";
 
-
 const TransactionBar = ({ mode = "spot" }) => {
   const isFutures = mode === "futures";
-  const setMarketMode = useMarketStore((s)=> s.setMarketMode);
 
-  // UI-only state
-  const [orderType, setOrderType] = useState("market"); // market | limit
+  /* ---------------- UI STATE ---------------- */
+  const [orderType, setOrderType] = useState("market");
   const [amount, setAmount] = useState("");
-  const [inputAsset, setInputAsset] = useState("USDT"); // USDT | BASE
+  const [inputAsset, setInputAsset] = useState("USDT");
 
-  // selected pair from global market store
+  /* ---------------- MARKET STATE ---------------- */
   const selectedPair = useMarketStore((s) => s.selectedPair);
   const prices = useMarketStore((s) => s.prices);
-
   const price = prices[selectedPair]?.price;
 
-  // BTCUSDT → BTC/USDT
   const baseCoin = selectedPair.replace("USDT", "");
   const displayPair = `${baseCoin}/USDT`;
 
-  // balances
+  /* ---------------- WALLET STATE ---------------- */
   const balances = useWalletStore((s) => s.balances);
-  const usdtBalance = balances["USDT"] ?? 0;
-  const baseCoinBalance = balances[baseCoin] ?? 0;
+  const fetchWallet = useWalletStore((s) => s.fetchWallet);
 
+  // 🔥 choose correct wallet based on mode
+  const wallet = balances?.[mode] || {};
 
+  const usdtBalance = wallet["USDT"] ?? 0;
+  const baseCoinBalance = wallet[baseCoin] ?? 0;
+
+  /* ---------------- MODE LOGIC ---------------- */
   const isBuyMode = inputAsset === "USDT";
   const isSellMode = inputAsset === baseCoin;
 
-
-  // balance validation
   const isInsufficientBalance = isBuyMode
     ? Number(amount) > usdtBalance
     : Number(amount) > baseCoinBalance;
 
-  // quantity estimate
+  /* ---------------- ESTIMATION ---------------- */
   const estimatedQuantity =
     isBuyMode && amount && price
       ? (Number(amount) / price).toFixed(6)
       : isSellMode
-        ? Number(amount || 0).toFixed(6)
-        : "0.000000";
+      ? Number(amount || 0).toFixed(6)
+      : "0.000000";
 
-  const fetchWallet = useWalletStore((s) => s.fetchWallet);
-  const { accessToken, refresh } = useAuthStore();
+  /* ---------------- AUTH ---------------- */
+  const { refresh } = useAuthStore();
 
+  /* ---------------- TRADE EXECUTION ---------------- */
   const executeTrade = async (side) => {
-  try {
-    const { accessToken } = useAuthStore.getState();
+    try {
+      const { accessToken } = useAuthStore.getState();
 
-    await axios.post(
-      "/trade/spot",
-      {
-        side,
-        baseCoin,
-        amount: Number(amount),
-        price,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      await axios.post(
+        isFutures ? "/trade/futures" : "/trade/spot",
+        {
+          side,
+          baseCoin,
+          amount: Number(amount),
+          price,
         },
-      }
-    );
-
-    fetchWallet();
-    setAmount("");
-
-  } catch (err) {
-    if (err.response?.status === 401) {
-      const refreshed = await useAuthStore.getState().refresh();
-
-      if (refreshed) {
-        // 🔥 retry ONCE with NEW token
-        const { accessToken: newToken } = useAuthStore.getState();
-
-        await axios.post(
-          "/trade/spot",
-          {
-            side,
-            baseCoin,
-            amount: Number(amount),
-            price,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${newToken}`,
+        }
+      );
+
+      fetchWallet();
+      setAmount("");
+
+    } catch (err) {
+      if (err.response?.status === 401) {
+        const refreshed = await refresh();
+
+        if (refreshed) {
+          const { accessToken: newToken } = useAuthStore.getState();
+
+          await axios.post(
+            isFutures ? "/trade/futures" : "/trade/spot",
+            {
+              side,
+              baseCoin,
+              amount: Number(amount),
+              price,
             },
-          }
-        );
+            {
+              headers: {
+                Authorization: `Bearer ${newToken}`,
+              },
+            }
+          );
 
-        fetchWallet();
-        setAmount("");
-        return;
+          fetchWallet();
+          setAmount("");
+          return;
+        }
       }
+
+      console.error("Trade failed:", err);
     }
+  };
 
-    console.error("Trade failed:", err);
-  }
-};
-
-  
-
-
+  /* ---------------- UI ---------------- */
   return (
     <div className="TransactionBar">
       <div className="futures-tx-order-type">
@@ -137,6 +132,7 @@ const TransactionBar = ({ mode = "spot" }) => {
         )}
       </div>
 
+      {/* PRICE INPUT */}
       <div className="tx-input">
         <input
           type="number"
