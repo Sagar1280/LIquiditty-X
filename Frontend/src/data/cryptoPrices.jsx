@@ -18,6 +18,7 @@ export const cryptoPairs = [
   { symbol: "UNI/USDT", logo: "https://cryptologos.cc/logos/uniswap-uni-logo.svg?v=040" },
   { symbol: "APT/USDT", logo: "https://cryptologos.cc/logos/aptos-apt-logo.svg?v=040" },
   { symbol: "ICP/USDT",  logo: "https://cryptologos.cc/logos/internet-computer-icp-logo.svg?v=040" },
+  {symbol: "USDT/USDT" , logo: "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040"}
 ];
 
 export const futuresPairs = [

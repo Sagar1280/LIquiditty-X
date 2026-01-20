@@ -9,8 +9,7 @@ import { useMarketStore } from "../store/marketStore";
 function Navbar() {
 
   const location = useLocation();
-  // Zustand auth state
-
+  
   const { accessToken, email, logout, openAuth } = useAuthStore();
 
   // Detect parent tab active 

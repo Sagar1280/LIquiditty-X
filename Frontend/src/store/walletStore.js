@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuthStore } from "./authStore";
 
 export const useWalletStore = create((set, get) => ({
-  // 🔥 Separate wallets
+  
   balances: {
     spot: {},
     futures: {},
@@ -47,7 +47,7 @@ export const useWalletStore = create((set, get) => ({
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      
+
       set({
         balances: {
           spot: res.data.spot || {},

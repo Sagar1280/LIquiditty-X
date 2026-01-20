@@ -7,9 +7,8 @@ import FuturesTrading from './pages/futures/FuturesTrading'
 import ConvertCrypto from './pages/buy/ConvertCrypto'
 import DepositUsdt from "./pages/buy/DepositUsdt";
 import Transfer from "./pages/wallet/Transfer";
-
-
-
+import SpotWallet from "./pages/wallet/SpotWallet";
+import FuturesWallet from "./pages/wallet/FuturesWallet";
 
 
 const router = createBrowserRouter(
@@ -22,9 +21,9 @@ const router = createBrowserRouter(
                 { path: 'spot', element: <TradeSpot /> },
                 { path: 'futures', element: <FuturesTrading /> },
                 { path: 'wallet' , children: [
-                    {index : true , element : <div> spot trading coming soon ..</div>},
-                    {path : 'spot' , element : <div> spot trading coming soon ..</div>},
-                    {path : 'futures' , element : <div> futures trading coming soon ..</div>},
+                    {index : true , element : <SpotWallet />},
+                    {path : 'spot' , element : <SpotWallet />},
+                    {path : 'futures' , element : <FuturesWallet />},
                     { path: 'transfer', element: <Transfer /> },
                 ]},
 
