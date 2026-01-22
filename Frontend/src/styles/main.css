@@ -902,6 +902,7 @@ body {
 /* Section blocks */
 .convert-section {
   background: #141414;
+  height: 100px;
   border: 1px solid rgba(255,255,255,0.09);
   padding: 14px 18px;
   border-radius: 12px;
