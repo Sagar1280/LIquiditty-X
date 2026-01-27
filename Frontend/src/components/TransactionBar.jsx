@@ -25,48 +25,37 @@ const TransactionBar = ({ mode = "spot" }) => {
   /* ---------------- WALLET STATE ---------------- */
   const balances = useWalletStore((s) => s.balances);
   const fetchWallet = useWalletStore((s) => s.fetchWallet);
-  const openPosition = useWalletStore((s) => s.openPosition);
+  const fetchPositions = useWalletStore((s) => s.fetchPositions);
 
-  const getAvailableFuturesBalance = useWalletStore(
-    (s) => s.getAvailableFuturesBalance
-  );
-
-  const usdtBalance = isFutures
-    ? getAvailableFuturesBalance()
-    : balances?.spot?.["USDT"] ?? 0;
+  const usdtBalance =
+    balances?.[isFutures ? "futures" : "spot"]?.["USDT"] ?? 0;
 
   const baseCoinBalance = balances?.spot?.[baseCoin] ?? 0;
 
   /* ---------------- MODE LOGIC ---------------- */
-
   const isBuyMode = isFutures ? true : inputAsset === "USDT";
   const isSellMode = isFutures ? true : inputAsset === baseCoin;
+
+  /* ---------------- FUTURES MARGIN LOGIC ---------------- */
+
+  const positionSize = Number(amount || 0);
+
+  const marginRequired = isFutures
+    ? positionSize / leverage
+    : 0;
+
+  const isInsufficientBalance = isFutures
+    ? marginRequired > usdtBalance
+    : isBuyMode
+      ? positionSize > usdtBalance
+      : positionSize > baseCoinBalance;
 
   /* ---------------- ESTIMATION ---------------- */
 
   const estimatedQuantity =
     amount && price
-      ? (Number(amount) / price).toFixed(6)
+      ? (positionSize / price).toFixed(6)
       : "0.000000";
-
-  const positionSizeUSDT = Number(amount || 0);
-
-  const marginRequired = isFutures
-    ? positionSizeUSDT / leverage
-    : 0;
-
-  const marginPercent = isFutures
-    ? (1 / leverage) * 100
-    : 0;
-
-  const isInsufficientFuturesBalance =
-    isFutures && marginRequired > usdtBalance;
-
-  const isInsufficientBalance = isFutures
-    ? isInsufficientFuturesBalance
-    : isBuyMode
-      ? Number(amount) > usdtBalance
-      : Number(amount) > baseCoinBalance;
 
   /* ---------------- AUTH ---------------- */
   const { refresh } = useAuthStore();
@@ -76,28 +65,39 @@ const TransactionBar = ({ mode = "spot" }) => {
   const executeTrade = async (side) => {
     try {
       const { accessToken } = useAuthStore.getState();
+      if (!price || !amount) return;
 
       if (isFutures) {
-        if (!price || !amount) return;
+        await axios.post(
+          "/trade/futures",
+          {
+            side,
+            pair: selectedPair,
+            leverage,
+            entryPrice: price,
+            usdtAmount: positionSize,
+            marginType: Fmode,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
-        openPosition({
-          pair: selectedPair,
-          side,
-          leverage,
-          entryPrice: price,
-          usdtAmount: Number(amount),
-        });
-
+        await fetchWallet();
+        await fetchPositions();
         setAmount("");
         return;
       }
 
+      // SPOT
       await axios.post(
         "/trade/spot",
         {
           side,
           baseCoin,
-          amount: Number(amount),
+          amount: positionSize,
           price,
         },
         {
@@ -107,35 +107,13 @@ const TransactionBar = ({ mode = "spot" }) => {
         }
       );
 
-      fetchWallet();
+      await fetchWallet();
       setAmount("");
 
     } catch (err) {
       if (err.response?.status === 401) {
         const refreshed = await refresh();
-
-        if (refreshed) {
-          const { accessToken: newToken } = useAuthStore.getState();
-
-          await axios.post(
-            "/trade/spot",
-            {
-              side,
-              baseCoin,
-              amount: Number(amount),
-              price,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${newToken}`,
-              },
-            }
-          );
-
-          fetchWallet();
-          setAmount("");
-          return;
-        }
+        if (refreshed) return executeTrade(side);
       }
 
       console.error("Trade failed:", err);
@@ -232,14 +210,16 @@ const TransactionBar = ({ mode = "spot" }) => {
             {baseCoinBalance.toLocaleString()} {baseCoin}
           </span>
         )}
+
+        {/* FUTURES MARGIN INFO */}
+        {isFutures && amount && (
+          <div className="tx-margin-info">
+            <div>Margin Required: {marginRequired.toFixed(2)} USDT</div>
+          </div>
+        )}
       </div>
 
-      {isFutures && amount && (
-        <div className="tx-margin-info">
-          <div>Margin Used: {marginRequired.toFixed(2)} USDT</div>
-          <div>Margin %: {marginPercent.toFixed(2)}%</div>
-        </div>
-      )}
+
 
       {/* ACTIONS */}
       <div className="tx-actions">
