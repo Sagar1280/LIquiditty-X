@@ -2,7 +2,6 @@ import { create } from "zustand";
 import axios from "axios";
 import { useAuthStore } from "./authStore";
 
-
 export const useWalletStore = create((set, get) => ({
   /* ---------------- WALLET BALANCES ---------------- */
 
@@ -16,74 +15,126 @@ export const useWalletStore = create((set, get) => ({
   /* ---------------- FUTURES ENGINE STATE ---------------- */
 
   positions: [],
-
   usedMargin: 0,
 
   /* ---------------- DERIVED HELPERS ---------------- */
-
 
   getFuturesBalance: () => {
     const state = get();
     return state.balances.futures["USDT"] ?? 0;
   },
 
-
   getAvailableFuturesBalance: () => {
     const state = get();
-    const total = state.getFuturesBalance();
-    return total - state.usedMargin;
+    return state.getFuturesBalance() - state.usedMargin;
   },
-
 
   /* ---------------- POSITION MANAGEMENT ---------------- */
 
-
   openPosition: ({ pair, side, leverage, entryPrice, usdtAmount }) =>
     set((state) => {
+      if (!entryPrice || !usdtAmount || leverage <= 0) return state;
+
+      const takerFeeRate = 0.0004;
+      const openFee = usdtAmount * takerFeeRate;
+
       const marginRequired = usdtAmount / leverage;
 
       const totalBalance = state.getFuturesBalance();
       const available = totalBalance - state.usedMargin;
 
-      if (marginRequired > available) {
-        console.log("Insufficient margin");
+      if (marginRequired + openFee > available) {
+        console.log("Insufficient balance (including fee)");
         return state;
       }
 
       const quantity = usdtAmount / entryPrice;
 
+      const maintenanceMarginRate = 0.005;
+
+      let liquidationPrice = 0;
+
+      if (side === "BUY") {
+        liquidationPrice =
+          entryPrice *
+          (1 - 1 / leverage + maintenanceMarginRate);
+      } else {
+        liquidationPrice =
+          entryPrice *
+          (1 + 1 / leverage - maintenanceMarginRate);
+      }
+
       const newPosition = {
         id: Date.now(),
         pair,
-        side, // "BUY" = long, "SELL" = short
+        side,
         leverage,
         entryPrice,
         quantity,
         positionSize: usdtAmount,
         marginUsed: marginRequired,
         pnl: 0,
-        liquidationPrice: 0, // we calculate next
+        liquidationPrice,
+        openFee,
       };
 
       return {
         positions: [...state.positions, newPosition],
         usedMargin: state.usedMargin + marginRequired,
+        balances: {
+          ...state.balances,
+          futures: {
+            ...state.balances.futures,
+            USDT: totalBalance - openFee, // ONLY fee deducted
+          },
+        },
       };
     }),
 
+  updatePnL: (currentPrice, pair) =>
+    set((state) => ({
+      positions: state.positions.map((pos) => {
+        if (pos.pair !== pair) return pos;
+
+        let pnl = 0;
+
+        if (pos.side === "BUY") {
+          pnl = (currentPrice - pos.entryPrice) * pos.quantity;
+        } else {
+          pnl = (pos.entryPrice - currentPrice) * pos.quantity;
+        }
+
+        return { ...pos, pnl };
+      }),
+    })),
 
   closePosition: (id) =>
     set((state) => {
       const position = state.positions.find((p) => p.id === id);
       if (!position) return state;
 
+      const takerFeeRate = 0.0004;
+      const closeFee = position.positionSize * takerFeeRate;
+
+      const realizedPnL = position.pnl - closeFee;
+
+      const totalBalance = state.getFuturesBalance();
+
+      const updatedBalance =
+        totalBalance + realizedPnL;
 
       return {
         positions: state.positions.filter((p) => p.id !== id),
         usedMargin: state.usedMargin - position.marginUsed,
+        balances: {
+          ...state.balances,
+          futures: {
+            ...state.balances.futures,
+            USDT: updatedBalance,
+          },
+        },
       };
     }),
-
 
   clearPositions: () =>
     set({
@@ -91,9 +142,7 @@ export const useWalletStore = create((set, get) => ({
       usedMargin: 0,
     }),
 
-
   /* ---------------- SETTERS ---------------- */
-
 
   setBalances: (spotBalances, futuresBalances) =>
     set({
@@ -103,42 +152,37 @@ export const useWalletStore = create((set, get) => ({
       },
     }),
 
-    /* ---------------- FETCH WALLET ---------------- */
+  /* ---------------- FETCH WALLET ---------------- */
 
-fetchWallet: async () => {
-  const { accessToken, refresh } = useAuthStore.getState();
+  fetchWallet: async () => {
+    const { accessToken, refresh } = useAuthStore.getState();
+    if (!accessToken) return;
 
-  if (!accessToken) return;
+    try {
+      set({ loading: true });
 
-  try {
-    set({ loading: true });
+      const res = await axios.get("/wallet", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    const res = await axios.get("/wallet", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+      set({
+        balances: {
+          spot: res.data.spot || {},
+          futures: res.data.futures || {},
+        },
+      });
 
-    set({
-      balances: {
-        spot: res.data.spot || {},
-        futures: res.data.futures || {},
-      },
-    });
-
-  } catch (err) {
-    if (err.response?.status === 401) {
-      const refreshed = await refresh();
-      if (refreshed) {
-        return get().fetchWallet();
+    } catch (err) {
+      if (err.response?.status === 401) {
+        const refreshed = await refresh();
+        if (refreshed) return get().fetchWallet();
       }
+
+      console.error("Wallet fetch failed:", err);
+    } finally {
+      set({ loading: false });
     }
-
-    console.error("Wallet fetch failed:", err);
-  } finally {
-    set({ loading: false });
-  }
-},
-
-
+  },
 }));

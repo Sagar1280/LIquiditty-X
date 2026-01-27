@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar'
 import { futuresPairs } from '../../data/cryptoPrices'
 import TradingViewWidget from '../../components/TradingViewWidget'
 import TransactionBar from '../../components/TransactionBar'
+import FuturesPositions from "../../components/FuturesPositions";
 
 const FuturesTrading = () => {
   return (
@@ -20,6 +21,7 @@ const FuturesTrading = () => {
         </div>
 
         <TransactionBar mode="futures" />
+        <FuturesPositions />
 
 
       </div>
