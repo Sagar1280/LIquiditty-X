@@ -11,6 +11,8 @@ const TransactionBar = ({ mode = "spot" }) => {
   const [orderType, setOrderType] = useState("market");
   const [amount, setAmount] = useState("");
   const [inputAsset, setInputAsset] = useState("USDT");
+  const [leverage, setLeverage] = useState(1);
+  const [Fmode, setFmode] = useState("Cross");
 
   /* ---------------- MARKET STATE ---------------- */
   const selectedPair = useMarketStore((s) => s.selectedPair);
@@ -23,39 +25,75 @@ const TransactionBar = ({ mode = "spot" }) => {
   /* ---------------- WALLET STATE ---------------- */
   const balances = useWalletStore((s) => s.balances);
   const fetchWallet = useWalletStore((s) => s.fetchWallet);
+  const openPosition = useWalletStore((s) => s.openPosition);
 
-  // 🔥 choose correct wallet based on mode
-  const wallet = balances?.[mode] || {};
+  const getAvailableFuturesBalance = useWalletStore(
+    (s) => s.getAvailableFuturesBalance
+  );
 
-  const usdtBalance = wallet["USDT"] ?? 0;
-  const baseCoinBalance = wallet[baseCoin] ?? 0;
+  const usdtBalance = isFutures
+    ? getAvailableFuturesBalance()
+    : balances?.spot?.["USDT"] ?? 0;
+
+  const baseCoinBalance = balances?.spot?.[baseCoin] ?? 0;
 
   /* ---------------- MODE LOGIC ---------------- */
-  const isBuyMode = inputAsset === "USDT";
-  const isSellMode = inputAsset === baseCoin;
 
-  const isInsufficientBalance = isBuyMode
-    ? Number(amount) > usdtBalance
-    : Number(amount) > baseCoinBalance;
+  const isBuyMode = isFutures ? true : inputAsset === "USDT";
+  const isSellMode = isFutures ? true : inputAsset === baseCoin;
 
   /* ---------------- ESTIMATION ---------------- */
+
   const estimatedQuantity =
-    isBuyMode && amount && price
+    amount && price
       ? (Number(amount) / price).toFixed(6)
-      : isSellMode
-      ? Number(amount || 0).toFixed(6)
       : "0.000000";
+
+  const positionSizeUSDT = Number(amount || 0);
+
+  const marginRequired = isFutures
+    ? positionSizeUSDT / leverage
+    : 0;
+
+  const marginPercent = isFutures
+    ? (1 / leverage) * 100
+    : 0;
+
+  const isInsufficientFuturesBalance =
+    isFutures && marginRequired > usdtBalance;
+
+  const isInsufficientBalance = isFutures
+    ? isInsufficientFuturesBalance
+    : isBuyMode
+      ? Number(amount) > usdtBalance
+      : Number(amount) > baseCoinBalance;
 
   /* ---------------- AUTH ---------------- */
   const { refresh } = useAuthStore();
 
   /* ---------------- TRADE EXECUTION ---------------- */
+
   const executeTrade = async (side) => {
     try {
       const { accessToken } = useAuthStore.getState();
 
+      if (isFutures) {
+        if (!price || !amount) return;
+
+        openPosition({
+          pair: selectedPair,
+          side,
+          leverage,
+          entryPrice: price,
+          usdtAmount: Number(amount),
+        });
+
+        setAmount("");
+        return;
+      }
+
       await axios.post(
-        isFutures ? "/trade/futures" : "/trade/spot",
+        "/trade/spot",
         {
           side,
           baseCoin,
@@ -80,7 +118,7 @@ const TransactionBar = ({ mode = "spot" }) => {
           const { accessToken: newToken } = useAuthStore.getState();
 
           await axios.post(
-            isFutures ? "/trade/futures" : "/trade/spot",
+            "/trade/spot",
             {
               side,
               baseCoin,
@@ -105,6 +143,7 @@ const TransactionBar = ({ mode = "spot" }) => {
   };
 
   /* ---------------- UI ---------------- */
+
   return (
     <div className="TransactionBar">
       <div className="futures-tx-order-type">
@@ -126,8 +165,23 @@ const TransactionBar = ({ mode = "spot" }) => {
 
         {isFutures && (
           <div className="tx-leverage">
-            <button className="leverage-type">Cross</button>
-            <button className="leverage-btn">20x</button>
+            <button
+              className="leverage-type"
+              onClick={() =>
+                setFmode(Fmode === "Cross" ? "Isolated" : "Cross")
+              }
+            >
+              {Fmode}
+            </button>
+
+            <button
+              className="leverage-btn"
+              onClick={() =>
+                setLeverage(leverage === 20 ? 1 : leverage + 1)
+              }
+            >
+              {leverage}x
+            </button>
           </div>
         )}
       </div>
@@ -149,32 +203,49 @@ const TransactionBar = ({ mode = "spot" }) => {
         <input
           type="number"
           min="0"
-          placeholder={`Amount (${inputAsset})`}
+          placeholder={`Amount (${isFutures ? "USDT" : inputAsset})`}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        <div
-          className="tx-input-suffix clickable"
-          onClick={() =>
-            setInputAsset(inputAsset === "USDT" ? baseCoin : "USDT")
-          }
-        >
-          {inputAsset}
-        </div>
+        {!isFutures && (
+          <div
+            className="tx-input-suffix clickable"
+            onClick={() =>
+              setInputAsset(inputAsset === "USDT" ? baseCoin : "USDT")
+            }
+          >
+            {inputAsset}
+          </div>
+        )}
+
+        {isFutures && (
+          <div className="tx-input-suffix">USDT</div>
+        )}
       </div>
 
       {/* BALANCES */}
       <div className="tx-balance">
         <span>Available: {usdtBalance.toLocaleString()} USDT</span>
-        <span>{baseCoinBalance.toLocaleString()} {baseCoin}</span>
+        {!isFutures && (
+          <span>
+            {baseCoinBalance.toLocaleString()} {baseCoin}
+          </span>
+        )}
       </div>
+
+      {isFutures && amount && (
+        <div className="tx-margin-info">
+          <div>Margin Used: {marginRequired.toFixed(2)} USDT</div>
+          <div>Margin %: {marginPercent.toFixed(2)}%</div>
+        </div>
+      )}
 
       {/* ACTIONS */}
       <div className="tx-actions">
         <button
           className="tx-btn-buy"
-          disabled={!isBuyMode || isInsufficientBalance || !amount}
+          disabled={isInsufficientBalance || !amount}
           onClick={() => executeTrade("BUY")}
         >
           <div>{isFutures ? `Long ${displayPair}` : `Buy ${baseCoin}`}</div>
@@ -185,7 +256,7 @@ const TransactionBar = ({ mode = "spot" }) => {
 
         <button
           className="tx-btn-sell"
-          disabled={!isSellMode || isInsufficientBalance || !amount}
+          disabled={isInsufficientBalance || !amount}
           onClick={() => executeTrade("SELL")}
         >
           <div>{isFutures ? `Short ${displayPair}` : `Sell ${baseCoin}`}</div>

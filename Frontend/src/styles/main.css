@@ -850,6 +850,15 @@ body {
   text-align: center;
 }
 
+.tx-margin-info {
+font-size: 12px;
+color: rgba(255, 255, 255, 0.559);
+display: flex;
+justify-content: space-between;
+gap: 30px;
+}
+
+
 
 /*-------------------------convert -------------------------*/
 

@@ -2,8 +2,10 @@ import { create } from "zustand";
 import axios from "axios";
 import { useAuthStore } from "./authStore";
 
+
 export const useWalletStore = create((set, get) => ({
-  
+  /* ---------------- WALLET BALANCES ---------------- */
+
   balances: {
     spot: {},
     futures: {},
@@ -11,7 +13,87 @@ export const useWalletStore = create((set, get) => ({
 
   loading: false,
 
+  /* ---------------- FUTURES ENGINE STATE ---------------- */
+
+  positions: [],
+
+  usedMargin: 0,
+
+  /* ---------------- DERIVED HELPERS ---------------- */
+
+
+  getFuturesBalance: () => {
+    const state = get();
+    return state.balances.futures["USDT"] ?? 0;
+  },
+
+
+  getAvailableFuturesBalance: () => {
+    const state = get();
+    const total = state.getFuturesBalance();
+    return total - state.usedMargin;
+  },
+
+
+  /* ---------------- POSITION MANAGEMENT ---------------- */
+
+
+  openPosition: ({ pair, side, leverage, entryPrice, usdtAmount }) =>
+    set((state) => {
+      const marginRequired = usdtAmount / leverage;
+
+      const totalBalance = state.getFuturesBalance();
+      const available = totalBalance - state.usedMargin;
+
+      if (marginRequired > available) {
+        console.log("Insufficient margin");
+        return state;
+      }
+
+      const quantity = usdtAmount / entryPrice;
+
+      const newPosition = {
+        id: Date.now(),
+        pair,
+        side, // "BUY" = long, "SELL" = short
+        leverage,
+        entryPrice,
+        quantity,
+        positionSize: usdtAmount,
+        marginUsed: marginRequired,
+        pnl: 0,
+        liquidationPrice: 0, // we calculate next
+      };
+
+      return {
+        positions: [...state.positions, newPosition],
+        usedMargin: state.usedMargin + marginRequired,
+      };
+    }),
+
+
+  closePosition: (id) =>
+    set((state) => {
+      const position = state.positions.find((p) => p.id === id);
+      if (!position) return state;
+
+
+      return {
+        positions: state.positions.filter((p) => p.id !== id),
+        usedMargin: state.usedMargin - position.marginUsed,
+      };
+    }),
+
+
+  clearPositions: () =>
+    set({
+      positions: [],
+      usedMargin: 0,
+    }),
+
+
   /* ---------------- SETTERS ---------------- */
+
 
   setBalances: (spotBalances, futuresBalances) =>
     set({
@@ -21,85 +103,42 @@ export const useWalletStore = create((set, get) => ({
       },
     }),
 
-  clearWallet: () =>
+    /* ---------------- FETCH WALLET ---------------- */
+
+fetchWallet: async () => {
+  const { accessToken, refresh } = useAuthStore.getState();
+
+  if (!accessToken) return;
+
+  try {
+    set({ loading: true });
+
+    const res = await axios.get("/wallet", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
     set({
       balances: {
-        spot: {},
-        futures: {},
+        spot: res.data.spot || {},
+        futures: res.data.futures || {},
       },
-    }),
+    });
 
-  /* ---------------- FETCH WALLET ---------------- */
-
-  fetchWallet: async () => {
-    const { accessToken, refresh } = useAuthStore.getState();
-
-    if (!accessToken) {
-      console.warn("No access token — skipping wallet fetch");
-      return;
-    }
-
-    try {
-      set({ loading: true });
-
-      const res = await axios.get("/wallet", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      set({
-        balances: {
-          spot: res.data.spot || {},
-          futures: res.data.futures || {},
-        },
-      });
-
-      console.log("📦 Wallet fetched:", res.data);
-
-    } catch (err) {
-      if (err.response?.status === 401) {
-        const refreshed = await refresh();
-        if (refreshed) {
-          return get().fetchWallet(); // 🔁 retry ONCE
-        }
+  } catch (err) {
+    if (err.response?.status === 401) {
+      const refreshed = await refresh();
+      if (refreshed) {
+        return get().fetchWallet();
       }
-
-      console.error("Wallet fetch failed:", err);
-      get().clearWallet();
-
-    } finally {
-      set({ loading: false });
     }
-  },
 
-  /* ---------------- WALLET TRANSFER (OPTIONAL, FUTURE) ---------------- */
+    console.error("Wallet fetch failed:", err);
+  } finally {
+    set({ loading: false });
+  }
+},
 
-  transferFunds: async ({ from, to, asset, amount }) => {
-    const { accessToken, refresh } = useAuthStore.getState();
 
-    try {
-      await axios.post(
-        "/wallet/transfer",
-        { from, to, asset, amount },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      await get().fetchWallet();
-
-    } catch (err) {
-      if (err.response?.status === 401) {
-        const refreshed = await refresh();
-        if (refreshed) {
-          return get().transferFunds({ from, to, asset, amount });
-        }
-      }
-
-      console.error("Wallet transfer failed", err);
-    }
-  },
 }));
